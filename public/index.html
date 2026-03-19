@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Claude Code Marketplace</title>
+    <meta
+      name="description"
+      content="A curated marketplace of Claude Code plugins for Next.js SaaS teams."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <p class="eyebrow">Claude Code plugin marketplace</p>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <h1>Build a sharper Next.js stack without assembling it from scratch.</h1>
+            <p class="lede">
+              This marketplace packages opinionated commands, agents, and workflows for
+              authentication, payments, data, UI, AI, and testing.
+            </p>
+            <div class="cta-row">
+              <a class="primary-link" href="https://github.com/localloop-pro/claude-code">View repository</a>
+              <a class="secondary-link" href="/health">Health check</a>
+            </div>
+          </div>
+          <aside class="hero-card">
+            <span class="card-label">Included tracks</span>
+            <ul>
+              <li>Next.js 15 app-router scaffolding</li>
+              <li>Drizzle and Postgres workflows</li>
+              <li>BetterAuth integration patterns</li>
+              <li>Polar billing helpers</li>
+              <li>shadcn and custom UI tooling</li>
+              <li>AI SDK and testing automation</li>
+            </ul>
+          </aside>
+        </div>
+      </header>
+
+      <main>
+        <section class="strip">
+          <p>Curated for teams shipping modern SaaS products with Claude Code in the loop.</p>
+        </section>
+
+        <section class="section-head">
+          <p class="section-kicker">Plugin set</p>
+          <h2>Everything here is grouped around the real bottlenecks of product work.</h2>
+        </section>
+
+        <section class="plugin-grid">
+          <article>
+            <span>01</span>
+            <h3>Next.js Core</h3>
+            <p>Page generation, APIs, middleware, server actions, and performance tuning.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Database Tools</h3>
+            <p>Schema authoring, migrations, and type-safe query patterns for Drizzle.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Auth Tools</h3>
+            <p>Protected routes, provider setup, and production-minded authentication flows.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Payment Tools</h3>
+            <p>Checkout flows, subscription logic, and webhook handling for Polar.</p>
+          </article>
+          <article>
+            <span>05</span>
+            <h3>UI Components</h3>
+            <p>shadcn support, custom component scaffolds, and form generation utilities.</p>
+          </article>
+          <article>
+            <span>06</span>
+            <h3>AI and Testing</h3>
+            <p>Streaming chat endpoints, function calling, Vitest, Playwright, and linting.</p>
+          </article>
+        </section>
+
+        <section class="callout">
+          <div>
+            <p class="section-kicker">Why this now works</p>
+            <h2>Coolify can now detect, build, and run this repository as an application.</h2>
+          </div>
+          <p>
+            The repo now exposes a root-level Node entrypoint, a static public site, and an
+            explicit Nixpacks start command. That removes the provider-detection failure from
+            your deployment logs.
+          </p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
