@@ -446,9 +446,11 @@ function sendFile(filePath, response) {
     }
 
     const extension = path.extname(filePath).toLowerCase();
+    const shouldDisableCaching = extension === ".html" || extension === ".css" || extension === ".js";
     response.writeHead(200, {
       "Content-Type": mimeTypes[extension] || "application/octet-stream",
-      "Cache-Control": extension === ".html" ? "no-cache" : "public, max-age=3600",
+      "Cache-Control": shouldDisableCaching ? "no-store, max-age=0, must-revalidate" : "public, max-age=3600",
+      Vary: "Accept-Encoding",
     });
     response.end(data);
   });
