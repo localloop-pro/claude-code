@@ -2,7 +2,7 @@
   "name": "claude-code-marketplace-site",
   "version": "1.0.0",
   "private": true,
-  "description": "Deployable landing page for the Claude Code Next.js SaaS marketplace.",
+  "description": "Deployable Bondi Local Mission Control dashboard for super-admin operations.",
   "engines": {
     "node": "22.x"
   },

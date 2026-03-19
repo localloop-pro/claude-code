@@ -1,21 +1,35 @@
-const http = require("http");
-const fs = require("fs");
-const path = require("path");
-
-const publicDir = path.join(__dirname, "public");
-
-const mimeTypes = {
-  ".css": "text/css; charset=utf-8",
-  ".html": "text/html; charset=utf-8",
-  ".js": "application/javascript; charset=utf-8",
-  ".json": "application/json; charset=utf-8",
-  ".png": "image/png",
-  ".svg": "image/svg+xml; charset=utf-8",
-  ".txt": "text/plain; charset=utf-8",
-  ".webp": "image/webp",
+const elements = {
+  syncTime: document.querySelector("#sync-time"),
+  kpiGrid: document.querySelector("#kpi-grid"),
+  operationsTape: document.querySelector("#operations-tape"),
+  briefingTitle: document.querySelector("#briefing-title"),
+  briefingStatus: document.querySelector("#briefing-status"),
+  briefingSummary: document.querySelector("#briefing-summary"),
+  briefingMetrics: document.querySelector("#briefing-metrics"),
+  briefingMode: document.querySelector("#briefing-mode"),
+  briefingWatch: document.querySelector("#briefing-watch"),
+  portfolioNav: document.querySelector("#portfolio-nav"),
+  businessTag: document.querySelector("#business-tag"),
+  businessName: document.querySelector("#business-name"),
+  businessSummary: document.querySelector("#business-summary"),
+  businessMetrics: document.querySelector("#business-metrics"),
+  orbitValue: document.querySelector("#orbit-value"),
+  signalBars: document.querySelector("#signal-bars"),
+  revenueCaption: document.querySelector("#revenue-caption"),
+  revenueChart: document.querySelector("#revenue-chart"),
+  agentGrid: document.querySelector("#agent-grid"),
+  manualQueue: document.querySelector("#manual-queue"),
+  providerList: document.querySelector("#provider-list"),
+  incidentList: document.querySelector("#incident-list"),
+  deploymentList: document.querySelector("#deployment-list"),
 };
 
-const missionControlPayload = {
+const state = {
+  dashboard: null,
+  selectedBusinessId: null,
+};
+
+const fallbackDashboard = {
   timezone: "Australia/Sydney",
   defaultBusinessId: "bondi-flagship",
   summary: [
@@ -41,10 +55,10 @@ const missionControlPayload = {
     },
   ],
   operationsTape: [
-    "Coolify rail green across production",
-    "Anthropic latency down 12% since 14:00",
-    "Stripe backlog drained after webhook retry",
-    "2 launches staged for tonight's precinct campaigns",
+    "Fallback mode still renders the mission deck",
+    "Relative asset paths enabled for subpath deploys",
+    "Switch to live API automatically when available",
+    "Bondi Local command deck remains deployable with npm start",
   ],
   businesses: [
     {
@@ -401,7 +415,7 @@ const missionControlPayload = {
       summary: "Static dashboard shell and API payload serving normally on the Node runtime. Health probe is green.",
       release: "master @ latest",
       runtime: "Node 22.x",
-      updated: "Updated 3m ago",
+      updated: "Updated moments ago",
     },
     {
       surface: "Admin API",
@@ -410,7 +424,7 @@ const missionControlPayload = {
       summary: "Dashboard payload endpoint responding under target latency with no cache churn.",
       release: "Payload v1",
       runtime: "Native http server",
-      updated: "Updated 3m ago",
+      updated: "Updated moments ago",
     },
     {
       surface: "BYOK vault",
@@ -419,7 +433,7 @@ const missionControlPayload = {
       summary: "Most providers are healthy, but one geospatial partner credential requires immediate re-authorization.",
       release: "Policy pack 4.2",
       runtime: "Rotation policy active",
-      updated: "Updated 8m ago",
+      updated: "Updated moments ago",
     },
     {
       surface: "Automation rail",
@@ -428,122 +442,327 @@ const missionControlPayload = {
       summary: "Campaign approvals are blocked behind stale inventory. No infrastructure issue, but launch confidence is reduced.",
       release: "Agent pack March",
       runtime: "27 operators active",
-      updated: "Updated 12m ago",
+      updated: "Updated moments ago",
     },
   ],
 };
 
-function sendFile(filePath, response) {
-  fs.readFile(filePath, (error, data) => {
-    if (error) {
-      if (error.code === "ENOENT") {
-        sendError(404, "Not found", response);
-        return;
-      }
-
-      sendError(500, "Internal server error", response);
-      return;
-    }
-
-    const extension = path.extname(filePath).toLowerCase();
-    response.writeHead(200, {
-      "Content-Type": mimeTypes[extension] || "application/octet-stream",
-      "Cache-Control": extension === ".html" ? "no-cache" : "public, max-age=3600",
-    });
-    response.end(data);
-  });
+function formatSyncLabel(isoString, timezone) {
+  const date = new Date(isoString);
+  return `Live sync ${date.toLocaleString("en-AU", {
+    weekday: "short",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: timezone,
+  })} ${timezone}`;
 }
 
-function sendJson(payload, response) {
-  response.writeHead(200, {
-    "Content-Type": "application/json; charset=utf-8",
-    "Cache-Control": "no-cache",
-  });
-  response.end(JSON.stringify(payload, null, 2));
+function createMetricCard(metric, index) {
+  const card = document.createElement("article");
+  card.className = "kpi-card fade-up";
+  card.style.setProperty("--delay", `${index * 70}ms`);
+  card.innerHTML = `
+    <span class="metric-label">${metric.label}</span>
+    <strong>${metric.value}</strong>
+    <span>${metric.detail}</span>
+  `;
+  return card;
 }
 
-function sendError(statusCode, message, response) {
-  response.writeHead(statusCode, {
-    "Content-Type": "text/plain; charset=utf-8",
-    "Cache-Control": "no-cache",
-  });
-  response.end(message);
+function createPanelMetricCard(metric) {
+  const card = document.createElement("article");
+  card.className = "metric-card";
+  card.innerHTML = `
+    <span class="metric-label">${metric.label}</span>
+    <strong class="metric-value">${metric.value}</strong>
+    <span class="metric-detail">${metric.detail}</span>
+  `;
+  return card;
 }
 
-function resolvePath(urlPath) {
-  const decodedPath = decodeURIComponent(urlPath.split("?")[0]);
-  const normalizedPath = path.normalize(decodedPath).replace(/^(\.\.[/\\])+/, "");
-  const requestedPath = normalizedPath === "/" ? "/index.html" : normalizedPath;
-  return path.join(publicDir, requestedPath);
+function createTapePill(item, index) {
+  const pill = document.createElement("span");
+  pill.className = "tape-pill fade-up";
+  pill.style.setProperty("--delay", `${index * 80}ms`);
+  pill.textContent = item;
+  return pill;
 }
 
-function requestHandler(request, response) {
-  if (!request.url) {
-    sendError(400, "Bad request", response);
-    return;
+function statusClass(status) {
+  if (status === "Risk") {
+    return "status-risk";
   }
 
-  if (request.url === "/health") {
-    sendJson({ status: "ok" }, response);
-    return;
+  if (status === "Watch") {
+    return "status-watch";
   }
 
-  if (request.url === "/api/mission-control") {
-    sendJson(
-      {
-        ...missionControlPayload,
-        syncedAt: new Date().toISOString(),
-      },
-      response,
-    );
-    return;
-  }
+  return "status-ok";
+}
 
-  const filePath = resolvePath(request.url);
+function withSyncTimestamp(dashboard) {
+  return {
+    ...dashboard,
+    syncedAt: new Date().toISOString(),
+  };
+}
 
-  fs.stat(filePath, (error, stats) => {
-    if (error) {
-      if (error.code === "ENOENT") {
-        sendError(404, "Not found", response);
-        return;
-      }
+function renderSummary(dashboard) {
+  elements.syncTime.textContent = formatSyncLabel(dashboard.syncedAt, dashboard.timezone);
+  elements.kpiGrid.replaceChildren(
+    ...dashboard.summary.map((metric, index) => createMetricCard(metric, index)),
+  );
+  elements.operationsTape.replaceChildren(
+    ...dashboard.operationsTape.map((item, index) => createTapePill(item, index)),
+  );
+}
 
-      sendError(500, "Internal server error", response);
-      return;
-    }
+function createPortfolioButton(business) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "portfolio-button";
+  button.dataset.businessId = business.id;
+  button.innerHTML = `
+    <div class="portfolio-title">
+      <strong>${business.name}</strong>
+      <span class="pill ${business.status === "Risk" ? "risk" : business.status === "Watch" ? "warn" : "ok"}">${business.status}</span>
+    </div>
+    <p>${business.region}</p>
+    <small>${business.snapshot}</small>
+  `;
+  button.addEventListener("click", () => {
+    state.selectedBusinessId = business.id;
+    renderBusinessFocus();
+  });
+  return button;
+}
 
-    if (stats.isDirectory()) {
-      sendFile(path.join(filePath, "index.html"), response);
-      return;
-    }
+function renderPortfolio(dashboard) {
+  elements.portfolioNav.replaceChildren(
+    ...dashboard.businesses.map((business) => createPortfolioButton(business)),
+  );
+}
 
-    sendFile(filePath, response);
+function renderBusinessFocus() {
+  const dashboard = state.dashboard;
+  const business =
+    dashboard.businesses.find((item) => item.id === state.selectedBusinessId) || dashboard.businesses[0];
+  state.selectedBusinessId = business.id;
+
+  elements.briefingTitle.textContent = business.name;
+  elements.briefingSummary.textContent = business.summary;
+  elements.briefingMode.textContent = business.mode;
+  elements.briefingWatch.textContent = business.watchpoint;
+  elements.briefingStatus.textContent = business.status;
+  elements.briefingStatus.className = `status-chip ${statusClass(business.status)}`;
+  elements.briefingMetrics.replaceChildren(...business.metrics.map((metric) => createPanelMetricCard(metric)));
+
+  elements.businessTag.textContent = business.tag;
+  elements.businessName.textContent = business.name;
+  elements.businessSummary.textContent = business.summary;
+  elements.businessMetrics.replaceChildren(...business.metrics.map((metric) => createPanelMetricCard(metric)));
+  elements.orbitValue.textContent = `${business.focusScore}%`;
+
+  elements.signalBars.replaceChildren(
+    ...business.signals.map((signal) => {
+      const row = document.createElement("div");
+      row.className = "signal-row";
+      row.innerHTML = `
+        <span class="bar-label">${signal.label}</span>
+        <div class="signal-track"><span class="signal-fill" style="--value:${signal.value}"></span></div>
+        <strong class="signal-value">${signal.value}%</strong>
+      `;
+      return row;
+    }),
+  );
+
+  elements.revenueCaption.textContent = business.revenueCaption;
+  elements.revenueChart.replaceChildren(
+    ...business.revenueTrend.map((point) => {
+      const bar = document.createElement("article");
+      bar.className = "revenue-bar fade-up";
+      bar.style.setProperty("--delay", `${point.order * 60}ms`);
+      bar.innerHTML = `
+        <div class="revenue-column" style="--value:${point.value}">
+          <strong>${point.display}</strong>
+        </div>
+        <div class="bar-footer">
+          <span class="bar-label">${point.label}</span>
+          <span>${point.delta}</span>
+        </div>
+      `;
+      return bar;
+    }),
+  );
+
+  document.querySelectorAll(".portfolio-button").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.businessId === business.id);
   });
 }
 
-function createServer() {
-  return http.createServer(requestHandler);
+function createAgentCard(agent, index) {
+  const card = document.createElement("article");
+  card.className = "agent-card fade-up";
+  card.style.setProperty("--delay", `${index * 80}ms`);
+  card.innerHTML = `
+    <div class="provider-header">
+      <div>
+        <span class="metric-label">${agent.domain}</span>
+        <h4>${agent.name}</h4>
+      </div>
+      <span class="pill ${agent.status === "Risk" ? "risk" : agent.status === "Watch" ? "warn" : "ok"}">${agent.status}</span>
+    </div>
+    <p>${agent.summary}</p>
+    <div class="queue-footer">
+      <span class="scope-chip">${agent.throughput}</span>
+      <span class="scope-chip">${agent.automation}</span>
+      <span class="scope-chip">${agent.owner}</span>
+    </div>
+  `;
+  return card;
 }
 
-function startServer() {
-  const host = process.env.HOST || "0.0.0.0";
-  const port = Number(process.env.PORT || 3000);
-  const server = createServer();
+function createQueueCard(item, index) {
+  const card = document.createElement("article");
+  card.className = "queue-card fade-up";
+  card.style.setProperty("--delay", `${index * 80}ms`);
+  card.innerHTML = `
+    <div class="queue-header">
+      <div>
+        <span class="queue-meta">${item.priority}</span>
+        <strong>${item.title}</strong>
+      </div>
+      <span class="pill ${item.state === "Risk" ? "risk" : item.state === "Watch" ? "warn" : "ok"}">${item.state}</span>
+    </div>
+    <p>${item.summary}</p>
+    <div class="queue-footer">
+      <span class="scope-chip">${item.owner}</span>
+      <span class="scope-chip">${item.deadline}</span>
+    </div>
+  `;
+  return card;
+}
 
-  server.listen(port, host, () => {
-    console.log(`Marketplace site listening on http://${host}:${port}`);
+function createProviderCard(provider, index) {
+  const card = document.createElement("article");
+  card.className = "provider-card fade-up";
+  card.style.setProperty("--delay", `${index * 80}ms`);
+  card.innerHTML = `
+    <div class="provider-header">
+      <div>
+        <span class="provider-meta">${provider.product}</span>
+        <strong>${provider.name}</strong>
+      </div>
+      <span class="pill ${provider.status === "Risk" ? "risk" : provider.status === "Watch" ? "warn" : "ok"}">${provider.status}</span>
+    </div>
+    <p class="provider-description">${provider.summary}</p>
+    <div class="provider-scopes">
+      ${provider.scopes.map((scope) => `<span class="scope-chip">${scope}</span>`).join("")}
+    </div>
+    <div class="queue-footer">
+      <span class="scope-chip">${provider.owner}</span>
+      <span class="scope-chip">${provider.rotation}</span>
+      <span class="scope-chip">${provider.keyRef}</span>
+    </div>
+  `;
+  return card;
+}
+
+function createIncidentCard(incident, index) {
+  const card = document.createElement("article");
+  card.className = "incident-card fade-up";
+  card.style.setProperty("--delay", `${index * 80}ms`);
+  card.innerHTML = `
+    <div class="incident-header">
+      <div>
+        <span class="incident-meta">${incident.business}</span>
+        <strong>${incident.title}</strong>
+      </div>
+      <span class="severity-pill ${incident.severity.toLowerCase()}">${incident.severity}</span>
+    </div>
+    <p>${incident.summary}</p>
+    <div class="queue-footer">
+      <span class="scope-chip">${incident.age}</span>
+      <span class="scope-chip">${incident.owner}</span>
+      <span class="scope-chip">${incident.action}</span>
+    </div>
+  `;
+  return card;
+}
+
+function createDeploymentCard(item, index) {
+  const card = document.createElement("article");
+  card.className = "deploy-card fade-up";
+  card.style.setProperty("--delay", `${index * 70}ms`);
+  card.innerHTML = `
+    <div class="deploy-header">
+      <div>
+        <span class="deploy-meta">${item.surface}</span>
+        <strong>${item.environment}</strong>
+      </div>
+      <span class="pill ${item.status === "Risk" ? "risk" : item.status === "Watch" ? "warn" : "ok"}">${item.status}</span>
+    </div>
+    <p class="deploy-note">${item.summary}</p>
+    <div class="queue-footer">
+      <span class="scope-chip">${item.release}</span>
+      <span class="scope-chip">${item.runtime}</span>
+      <span class="scope-chip">${item.updated}</span>
+    </div>
+  `;
+  return card;
+}
+
+function renderCollections(dashboard) {
+  elements.agentGrid.replaceChildren(
+    ...dashboard.agents.map((agent, index) => createAgentCard(agent, index)),
+  );
+  elements.manualQueue.replaceChildren(
+    ...dashboard.manualQueue.map((item, index) => createQueueCard(item, index)),
+  );
+  elements.providerList.replaceChildren(
+    ...dashboard.providers.map((provider, index) => createProviderCard(provider, index)),
+  );
+  elements.incidentList.replaceChildren(
+    ...dashboard.incidents.map((incident, index) => createIncidentCard(incident, index)),
+  );
+  elements.deploymentList.replaceChildren(
+    ...dashboard.deployments.map((item, index) => createDeploymentCard(item, index)),
+  );
+}
+
+function renderDashboard(dashboard) {
+  state.dashboard = dashboard;
+  state.selectedBusinessId = dashboard.defaultBusinessId;
+  renderSummary(dashboard);
+  renderPortfolio(dashboard);
+  renderBusinessFocus();
+  renderCollections(dashboard);
+}
+
+async function loadDashboard() {
+  const response = await fetch("api/mission-control", {
+    headers: {
+      Accept: "application/json",
+    },
   });
 
-  return server;
+  if (!response.ok) {
+    throw new Error(`Dashboard request failed with ${response.status}`);
+  }
+
+  return response.json();
 }
 
-module.exports = {
-  createServer,
-  requestHandler,
-  resolvePath,
-  startServer,
-};
+async function init() {
+  renderDashboard(withSyncTimestamp(fallbackDashboard));
 
-if (require.main === module) {
-  startServer();
+  try {
+    const liveDashboard = await loadDashboard();
+    renderDashboard(liveDashboard);
+  } catch (error) {
+    elements.syncTime.textContent = `Demo mode ${formatSyncLabel(new Date().toISOString(), fallbackDashboard.timezone)}`;
+  }
 }
+
+init();
