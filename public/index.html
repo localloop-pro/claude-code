@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Azeret+Mono:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css?v=20260319b" />
+    <link rel="stylesheet" href="/styles.css?v=20260319c" />
   </head>
   <body>
     <div class="mission-frame">
@@ -102,6 +102,7 @@
           <button class="tab-button is-active" type="button" data-tab-target="overview" role="tab">Overview</button>
           <button class="tab-button" type="button" data-tab-target="businesses" role="tab">Businesses</button>
           <button class="tab-button" type="button" data-tab-target="operations" role="tab">Operations</button>
+          <button class="tab-button" type="button" data-tab-target="forge" role="tab">Forge</button>
           <button class="tab-button" type="button" data-tab-target="systems" role="tab">Systems</button>
           <button class="tab-button" type="button" data-tab-target="access" role="tab">Access</button>
         </nav>
@@ -249,24 +250,84 @@
           <div id="incident-list" class="incident-list"></div>
         </section>
 
-        <section class="panel span-6 dashboard-panel" data-panel="systems" role="tabpanel">
+        <section class="panel span-12 dashboard-panel" data-panel="forge" role="tabpanel">
           <div class="panel-head">
             <div>
-              <p class="eyebrow">BYOK vault</p>
-              <h3>Provider keys and runtime posture</h3>
+              <p class="eyebrow">AutoForge command rail</p>
+              <h3>Everything built lands inside Mission Control</h3>
             </div>
-            <span class="panel-note">Connection health, owner, and rotation windows.</span>
+            <span class="panel-note">Brief, branch, preview, approve, deploy.</span>
+          </div>
+          <div class="forge-hero">
+            <article class="forge-command-card">
+              <div class="forge-command-head">
+                <div>
+                  <p class="metric-label">Forge status</p>
+                  <h4 id="forge-title">Loading...</h4>
+                </div>
+                <span id="forge-status" class="pill ok">Live</span>
+              </div>
+              <p id="forge-summary" class="forge-summary"></p>
+              <div id="forge-chip-row" class="forge-chip-row"></div>
+            </article>
+            <div id="forge-stage-grid" class="forge-stage-grid"></div>
+          </div>
+          <div id="forge-metric-grid" class="forge-metric-grid"></div>
+        </section>
+
+        <section class="panel span-7 dashboard-panel" data-panel="forge" role="tabpanel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Build intake</p>
+              <h3>Active build queue</h3>
+            </div>
+            <span class="panel-note">Every request stays visible to operators.</span>
+          </div>
+          <div id="forge-build-list" class="forge-build-list"></div>
+        </section>
+
+        <section class="panel span-5 dashboard-panel" data-panel="forge" role="tabpanel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Release rail</p>
+              <h3>Targets ready for publish</h3>
+            </div>
+            <span class="panel-note">Coolify and production handoff status.</span>
+          </div>
+          <div id="forge-release-list" class="forge-release-list"></div>
+        </section>
+
+        <section class="panel span-12 dashboard-panel" data-panel="forge" role="tabpanel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Guardrails</p>
+              <h3>What keeps Forge inside the control surface</h3>
+            </div>
+            <span class="panel-note">Unified auth, routing, audit, and rollback posture.</span>
+          </div>
+          <div id="forge-guardrail-grid" class="forge-guardrail-grid"></div>
+        </section>
+
+        <section class="panel span-6 dashboard-panel systems-panel" data-panel="systems" role="tabpanel">
+          <div class="panel-head systems-head">
+            <div class="systems-heading">
+              <p class="eyebrow">BYOK vault</p>
+              <h3>Providers and keys</h3>
+              <p class="systems-copy">Credential health, owner coverage, runtime posture, and rotation windows.</p>
+            </div>
+            <div id="provider-summary" class="systems-summary" aria-label="Provider summary"></div>
           </div>
           <div id="provider-list" class="provider-list"></div>
         </section>
 
-        <section class="panel span-6 dashboard-panel" data-panel="systems" role="tabpanel">
-          <div class="panel-head">
-            <div>
+        <section class="panel span-6 dashboard-panel systems-panel" data-panel="systems" role="tabpanel">
+          <div class="panel-head systems-head">
+            <div class="systems-heading">
               <p class="eyebrow">Deploy rail</p>
-              <h3>Environment status and release confidence</h3>
+              <h3>Deploy confidence</h3>
+              <p class="systems-copy">Environment health, release posture, runtime state, and publish readiness.</p>
             </div>
-            <span class="panel-note">Single-command Node deployment posture.</span>
+            <div id="deployment-summary" class="systems-summary" aria-label="Deployment summary"></div>
           </div>
           <div id="deployment-list" class="deployment-list"></div>
         </section>
@@ -310,7 +371,44 @@
                 <li><strong>Guest</strong><span>No access</span></li>
               </ul>
             </article>
-            <article class="access-card">
+            <article class="access-card access-endpoint-card">
+              <div class="access-card-head">
+                <div>
+                  <p class="metric-label">Session control</p>
+                  <strong>Logout endpoint</strong>
+                </div>
+                <span class="pill warn">Reference</span>
+              </div>
+              <p>
+                Keep the LocalLoop session contract visible in Mission Control even when the local
+                Swagger surface is unavailable.
+              </p>
+              <div class="endpoint-chip-row" aria-label="Logout endpoint contract">
+                <span class="scope-chip">Authentication</span>
+                <span class="scope-chip">Bearer JWT</span>
+                <span class="scope-chip">No parameters</span>
+                <span class="scope-chip">200 Logged out</span>
+              </div>
+              <div class="endpoint-spec-list" aria-label="Logout endpoint details">
+                <div class="endpoint-spec-row">
+                  <span class="endpoint-spec-label">Method</span>
+                  <code>POST</code>
+                </div>
+                <div class="endpoint-spec-row">
+                  <span class="endpoint-spec-label">Path</span>
+                  <code>/api/auth/logout</code>
+                </div>
+              </div>
+              <a
+                class="analyze-button secondary-action access-link"
+                href="http://localhost:3001/api-docs/#/Authentication/post_api_auth_logout"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open local API docs
+              </a>
+            </article>
+            <article class="access-card access-card-wide">
               <div class="access-card-head">
                 <p class="metric-label">Audit trail</p>
                 <span class="pill ok">Live</span>
@@ -322,6 +420,6 @@
       </main>
     </div>
 
-    <script src="/app.js?v=20260319b" defer></script>
+    <script src="/app.js?v=20260319c" defer></script>
   </body>
 </html>

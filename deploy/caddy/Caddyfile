@@ -1,0 +1,5 @@
+clade-w0w0og.167.86.79.151.sslip.io {
+  encode zstd gzip
+
+  reverse_proxy 127.0.0.1:3000
+}

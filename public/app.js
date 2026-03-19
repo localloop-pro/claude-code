@@ -34,10 +34,21 @@ const elements = {
   revenueChart: document.querySelector("#revenue-chart"),
   agentGrid: document.querySelector("#agent-grid"),
   manualQueue: document.querySelector("#manual-queue"),
+  providerSummary: document.querySelector("#provider-summary"),
   providerList: document.querySelector("#provider-list"),
   incidentList: document.querySelector("#incident-list"),
+  deploymentSummary: document.querySelector("#deployment-summary"),
   deploymentList: document.querySelector("#deployment-list"),
   auditTrail: document.querySelector("#audit-trail"),
+  forgeTitle: document.querySelector("#forge-title"),
+  forgeStatus: document.querySelector("#forge-status"),
+  forgeSummary: document.querySelector("#forge-summary"),
+  forgeChipRow: document.querySelector("#forge-chip-row"),
+  forgeStageGrid: document.querySelector("#forge-stage-grid"),
+  forgeMetricGrid: document.querySelector("#forge-metric-grid"),
+  forgeBuildList: document.querySelector("#forge-build-list"),
+  forgeReleaseList: document.querySelector("#forge-release-list"),
+  forgeGuardrailGrid: document.querySelector("#forge-guardrail-grid"),
 };
 
 const state = {
@@ -76,6 +87,7 @@ const fallbackDashboard = {
     "Relative asset paths enabled for subpath deploys",
     "Switch to live API automatically when available",
     "Bondi Local command deck remains deployable with npm start",
+    "Forge intake stays attached to the Mission Control deploy rail",
   ],
   businesses: [
     {
@@ -462,6 +474,165 @@ const fallbackDashboard = {
       updated: "Updated moments ago",
     },
   ],
+  forge: {
+    headline: {
+      status: "Live",
+      title: "AutoForge is wired into the Mission Control rail",
+      summary:
+        "New build requests open inside the same command deck, branch through the same deployment discipline, and land on Coolify without leaving the admin surface.",
+      chips: [
+        "Mission Control-owned intake",
+        "Branch-per-build flow",
+        "Preview before publish",
+        "Coolify release gate",
+      ],
+    },
+    metrics: [
+      {
+        label: "Active briefs",
+        value: "6",
+        detail: "Four builds are generating and two are waiting on operator review.",
+      },
+      {
+        label: "Median brief to preview",
+        value: "14m",
+        detail: "From accepted prompt to a reviewable environment with branch metadata attached.",
+      },
+      {
+        label: "Publish confidence",
+        value: "98.2%",
+        detail: "Recent Forge runs reached deploy-ready state without manual patching.",
+      },
+      {
+        label: "Coolify targets",
+        value: "4",
+        detail: "Web, API, worker, and preview rails are connected to the same release view.",
+      },
+    ],
+    stages: [
+      {
+        phase: "01 Intake",
+        title: "Capture the brief and assign a surface",
+        status: "Live",
+        detail:
+          "Operator requests and agent-generated opportunities enter Mission Control first, then get pinned to the target business, route, or platform rail.",
+        meta: ["Mission ticket #284", "Portfolio scoped", "Auth inherited"],
+      },
+      {
+        phase: "02 Generate",
+        title: "Open a branch and build inside guardrails",
+        status: "Generating",
+        detail:
+          "AutoForge creates the implementation branch, writes the UI or workflow change, and keeps every step visible from the same deck.",
+        meta: ["codex/forge-local-launch-kit", "UI + server touch", "Smoke checks queued"],
+      },
+      {
+        phase: "03 Review",
+        title: "Preview with audit context attached",
+        status: "Review",
+        detail:
+          "Preview links, changed surfaces, and deployment notes stay attached to the build so super admins can approve without leaving Mission Control.",
+        meta: ["Preview URL pending", "Audit note attached", "Rollback prepared"],
+      },
+      {
+        phase: "04 Deploy",
+        title: "Publish directly to Coolify",
+        status: "Ready",
+        detail:
+          "Approved changes merge into the primary rail, inherit existing environment secrets, and appear in the deployment view immediately.",
+        meta: ["Coolify target ready", "Shared env vars", "Release slot 5:30 PM"],
+      },
+    ],
+    builds: [
+      {
+        surface: "Campaign surface",
+        name: "Local launch kit generator",
+        status: "Generating",
+        summary:
+          "Creating a reusable launch scaffold with merchant offers, analytics hooks, and modular conversion blocks for upcoming precinct drops.",
+        branch: "codex/forge-local-launch-kit",
+        owner: "AutoForge",
+        next: "Preview URL in 6m",
+        updated: "Touched 2m ago",
+      },
+      {
+        surface: "Dashboard extension",
+        name: "Merchant analytics overlay",
+        status: "Review",
+        summary:
+          "Adds a Mission Control-ready reporting layer so newly generated surfaces can expose conversion and retention data on day one.",
+        branch: "codex/forge-merchant-analytics",
+        owner: "Growth desk",
+        next: "Awaiting super-admin signoff",
+        updated: "Touched 9m ago",
+      },
+      {
+        surface: "Deployment rail",
+        name: "Coolify release checklist",
+        status: "Ready",
+        summary:
+          "Packaging deployment notes, route ownership, and rollback instructions into a repeatable publish card for all Forge-built surfaces.",
+        branch: "codex/forge-coolify-checklist",
+        owner: "Platform ops",
+        next: "Promote during next rail window",
+        updated: "Touched 14m ago",
+      },
+    ],
+    releases: [
+      {
+        target: "Primary web rail",
+        name: "mission-control-web",
+        status: "Ready",
+        summary:
+          "Forge output merges into the main web deployment so the new surface ships with unified auth, observability, and release ownership.",
+        branch: "master merge queued",
+        window: "Next window 5:30 PM",
+        updated: "Confidence 98%",
+      },
+      {
+        target: "Preview environments",
+        name: "coolify-previews",
+        status: "Live",
+        summary:
+          "Each approved build can expose a review URL before publish, keeping stakeholder approval and regression checks in one rail.",
+        branch: "Branch previews armed",
+        window: "Created on demand",
+        updated: "Healthy now",
+      },
+      {
+        target: "Automation hooks",
+        name: "agents-and-jobs",
+        status: "Watch",
+        summary:
+          "Post-deploy agent sync is healthy overall, but campaign automation still waits on one stale partner inventory feed.",
+        branch: "Job pack March",
+        window: "Retry after re-auth",
+        updated: "1 dependency at risk",
+      },
+    ],
+    guardrails: [
+      {
+        title: "Unified auth boundary",
+        detail:
+          "Forge inherits the super-admin access model instead of creating a detached workflow or second login surface.",
+      },
+      {
+        title: "Single deploy story",
+        detail:
+          "Generated changes move through the same Mission Control release rail, so rollback and ownership stay obvious.",
+      },
+      {
+        title: "Branch-level traceability",
+        detail:
+          "Every Forge build opens a named branch and carries context for who requested it, what changed, and what ships next.",
+      },
+      {
+        title: "Audit-ready approvals",
+        detail:
+          "Preview, approval, and publish decisions remain visible in the command deck and align with the existing dismissal and change-lock posture.",
+      },
+    ],
+  },
 };
 
 function formatSyncLabel(isoString, timezone) {
@@ -506,12 +677,36 @@ function createTapePill(item, index) {
   return pill;
 }
 
+function createSystemsPill(label, value, tone = "neutral") {
+  const pill = document.createElement("article");
+  pill.className = `systems-pill ${tone}`;
+  pill.innerHTML = `
+    <span class="systems-pill-label">${label}</span>
+    <strong>${value}</strong>
+  `;
+  return pill;
+}
+
+function pillTone(status) {
+  if (["Risk", "Blocked", "Failed"].includes(status)) {
+    return "risk";
+  }
+
+  if (["Watch", "Queued", "Generating", "Review", "Pending"].includes(status)) {
+    return "warn";
+  }
+
+  return "ok";
+}
+
 function statusClass(status) {
-  if (status === "Risk") {
+  const tone = pillTone(status);
+
+  if (tone === "risk") {
     return "status-risk";
   }
 
-  if (status === "Watch") {
+  if (tone === "warn") {
     return "status-watch";
   }
 
@@ -525,23 +720,41 @@ function withSyncTimestamp(dashboard) {
   };
 }
 
-function setActiveTab(tabId) {
-  state.activeTab = tabId;
-  document.documentElement.dataset.activeTab = tabId;
+function normalizeTabId(tabId) {
+  const validTab = elements.tabButtons.find((button) => button.dataset.tabTarget === tabId);
+  return validTab ? tabId : "overview";
+}
+
+function syncTabHash(tabId) {
+  const nextHash = `#${tabId}`;
+  if (window.location.hash !== nextHash) {
+    window.history.replaceState(null, "", nextHash);
+  }
+}
+
+function setActiveTab(tabId, options = {}) {
+  const nextTabId = normalizeTabId(tabId);
+
+  state.activeTab = nextTabId;
+  document.documentElement.dataset.activeTab = nextTabId;
 
   elements.tabButtons.forEach((button) => {
-    const isActive = button.dataset.tabTarget === tabId;
+    const isActive = button.dataset.tabTarget === nextTabId;
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-selected", String(isActive));
     button.tabIndex = isActive ? 0 : -1;
   });
 
   elements.tabPanels.forEach((panel) => {
-    const isActive = panel.dataset.panel === tabId;
+    const isActive = panel.dataset.panel === nextTabId;
     panel.classList.toggle("is-active", isActive);
     panel.toggleAttribute("hidden", !isActive);
     panel.setAttribute("aria-hidden", String(!isActive));
   });
+
+  if (options.updateHash !== false) {
+    syncTabHash(nextTabId);
+  }
 }
 
 function renderSummary(dashboard) {
@@ -562,7 +775,7 @@ function createPortfolioButton(business) {
   button.innerHTML = `
     <div class="portfolio-title">
       <strong>${business.name}</strong>
-      <span class="pill ${business.status === "Risk" ? "risk" : business.status === "Watch" ? "warn" : "ok"}">${business.status}</span>
+      <span class="pill ${pillTone(business.status)}">${business.status}</span>
     </div>
     <p>${business.region}</p>
     <small>${business.snapshot}</small>
@@ -689,7 +902,7 @@ function createAgentCard(agent, index) {
         <span class="metric-label">${agent.domain}</span>
         <h4>${agent.name}</h4>
       </div>
-      <span class="pill ${agent.status === "Risk" ? "risk" : agent.status === "Watch" ? "warn" : "ok"}">${agent.status}</span>
+      <span class="pill ${pillTone(agent.status)}">${agent.status}</span>
     </div>
     <p>${agent.summary}</p>
     <div class="queue-footer">
@@ -711,7 +924,7 @@ function createQueueCard(item, index) {
         <span class="queue-meta">${item.priority}</span>
         <strong>${item.title}</strong>
       </div>
-      <span class="pill ${item.state === "Risk" ? "risk" : item.state === "Watch" ? "warn" : "ok"}">${item.state}</span>
+      <span class="pill ${pillTone(item.state)}">${item.state}</span>
     </div>
     <p>${item.summary}</p>
     <div class="queue-footer">
@@ -732,7 +945,7 @@ function createProviderCard(provider, index) {
         <span class="provider-meta">${provider.product}</span>
         <strong>${provider.name}</strong>
       </div>
-      <span class="pill ${provider.status === "Risk" ? "risk" : provider.status === "Watch" ? "warn" : "ok"}">${provider.status}</span>
+      <span class="pill ${pillTone(provider.status)}">${provider.status}</span>
     </div>
     <p class="provider-description">${provider.summary}</p>
     <div class="provider-scopes">
@@ -779,7 +992,7 @@ function createDeploymentCard(item, index) {
         <span class="deploy-meta">${item.surface}</span>
         <strong>${item.environment}</strong>
       </div>
-      <span class="pill ${item.status === "Risk" ? "risk" : item.status === "Watch" ? "warn" : "ok"}">${item.status}</span>
+      <span class="pill ${pillTone(item.status)}">${item.status}</span>
     </div>
     <p class="deploy-note">${item.summary}</p>
     <div class="queue-footer">
@@ -806,6 +1019,166 @@ function renderCollections(dashboard) {
   );
   elements.deploymentList.replaceChildren(
     ...dashboard.deployments.map((item, index) => createDeploymentCard(item, index)),
+  );
+}
+
+function renderSystemsSummary(dashboard) {
+  if (!elements.providerSummary || !elements.deploymentSummary) {
+    return;
+  }
+
+  const healthyProviders = dashboard.providers.filter((provider) => provider.status === "Nominal").length;
+  const providerAttention = dashboard.providers.length - healthyProviders;
+  const nextRotation =
+    dashboard.providers.find((provider) => provider.status !== "Nominal")?.rotation ??
+    dashboard.providers[0]?.rotation ??
+    "Tracked";
+
+  elements.providerSummary.replaceChildren(
+    createSystemsPill("Healthy", `${healthyProviders}/${dashboard.providers.length}`, providerAttention ? "warn" : "ok"),
+    createSystemsPill("Attention", `${providerAttention}`, providerAttention ? "warn" : "ok"),
+    createSystemsPill("Rotation", nextRotation, "neutral"),
+  );
+
+  const nominalDeployments = dashboard.deployments.filter((item) => item.status === "Nominal").length;
+  const deploymentAttention = dashboard.deployments.length - nominalDeployments;
+  const releaseLead =
+    dashboard.deployments.find((item) => item.status !== "Nominal")?.surface ??
+    dashboard.deployments[0]?.surface ??
+    "Production";
+
+  elements.deploymentSummary.replaceChildren(
+    createSystemsPill(
+      "Nominal",
+      `${nominalDeployments}/${dashboard.deployments.length}`,
+      deploymentAttention ? "warn" : "ok",
+    ),
+    createSystemsPill("Action", `${deploymentAttention}`, deploymentAttention ? "warn" : "ok"),
+    createSystemsPill("Surface", releaseLead, "neutral"),
+  );
+}
+
+function createForgeMetricCard(metric, index) {
+  const card = document.createElement("article");
+  card.className = "metric-card forge-metric-card fade-up";
+  card.style.setProperty("--delay", `${index * 70}ms`);
+  card.innerHTML = `
+    <span class="metric-label">${metric.label}</span>
+    <strong class="metric-value">${metric.value}</strong>
+    <span class="metric-detail">${metric.detail}</span>
+  `;
+  return card;
+}
+
+function createForgeChip(chip, index) {
+  const item = document.createElement("span");
+  item.className = "scope-chip fade-up";
+  item.style.setProperty("--delay", `${index * 60}ms`);
+  item.textContent = chip;
+  return item;
+}
+
+function createForgeStageCard(stage, index) {
+  const card = document.createElement("article");
+  card.className = "forge-stage-card fade-up";
+  card.style.setProperty("--delay", `${index * 90}ms`);
+  card.innerHTML = `
+    <div class="forge-stage-head">
+      <span class="metric-label">${stage.phase}</span>
+      <span class="pill ${pillTone(stage.status)}">${stage.status}</span>
+    </div>
+    <strong>${stage.title}</strong>
+    <p>${stage.detail}</p>
+    <div class="queue-footer">
+      ${stage.meta.map((item) => `<span class="scope-chip">${item}</span>`).join("")}
+    </div>
+  `;
+  return card;
+}
+
+function createForgeBuildCard(build, index) {
+  const card = document.createElement("article");
+  card.className = "forge-build-card fade-up";
+  card.style.setProperty("--delay", `${index * 80}ms`);
+  card.innerHTML = `
+    <div class="queue-header">
+      <div>
+        <span class="queue-meta">${build.surface}</span>
+        <strong>${build.name}</strong>
+      </div>
+      <span class="pill ${pillTone(build.status)}">${build.status}</span>
+    </div>
+    <p>${build.summary}</p>
+    <div class="provider-scopes">
+      <span class="scope-chip">${build.branch}</span>
+      <span class="scope-chip">${build.owner}</span>
+    </div>
+    <div class="queue-footer">
+      <span class="scope-chip">${build.next}</span>
+      <span class="scope-chip">${build.updated}</span>
+    </div>
+  `;
+  return card;
+}
+
+function createForgeReleaseCard(release, index) {
+  const card = document.createElement("article");
+  card.className = "forge-release-card fade-up";
+  card.style.setProperty("--delay", `${index * 80}ms`);
+  card.innerHTML = `
+    <div class="deploy-header">
+      <div>
+        <span class="deploy-meta">${release.target}</span>
+        <strong>${release.name}</strong>
+      </div>
+      <span class="pill ${pillTone(release.status)}">${release.status}</span>
+    </div>
+    <p>${release.summary}</p>
+    <div class="queue-footer">
+      <span class="scope-chip">${release.branch}</span>
+      <span class="scope-chip">${release.window}</span>
+      <span class="scope-chip">${release.updated}</span>
+    </div>
+  `;
+  return card;
+}
+
+function createForgeGuardrailCard(item, index) {
+  const card = document.createElement("article");
+  card.className = "forge-guardrail-card fade-up";
+  card.style.setProperty("--delay", `${index * 70}ms`);
+  card.innerHTML = `
+    <span class="metric-label">Guardrail ${String(index + 1).padStart(2, "0")}</span>
+    <strong>${item.title}</strong>
+    <p>${item.detail}</p>
+  `;
+  return card;
+}
+
+function renderForgePanel(dashboard) {
+  const forge = dashboard.forge ?? fallbackDashboard.forge;
+
+  elements.forgeTitle.textContent = forge.headline.title;
+  elements.forgeSummary.textContent = forge.headline.summary;
+  elements.forgeStatus.textContent = forge.headline.status;
+  elements.forgeStatus.className = `pill ${pillTone(forge.headline.status)}`;
+  elements.forgeChipRow.replaceChildren(
+    ...forge.headline.chips.map((chip, index) => createForgeChip(chip, index)),
+  );
+  elements.forgeStageGrid.replaceChildren(
+    ...forge.stages.map((stage, index) => createForgeStageCard(stage, index)),
+  );
+  elements.forgeMetricGrid.replaceChildren(
+    ...forge.metrics.map((metric, index) => createForgeMetricCard(metric, index)),
+  );
+  elements.forgeBuildList.replaceChildren(
+    ...forge.builds.map((build, index) => createForgeBuildCard(build, index)),
+  );
+  elements.forgeReleaseList.replaceChildren(
+    ...forge.releases.map((release, index) => createForgeReleaseCard(release, index)),
+  );
+  elements.forgeGuardrailGrid.replaceChildren(
+    ...forge.guardrails.map((item, index) => createForgeGuardrailCard(item, index)),
   );
 }
 
@@ -858,6 +1231,8 @@ function renderDashboard(dashboard) {
   renderPortfolio(dashboard);
   renderBusinessFocus();
   renderCollections(dashboard);
+  renderSystemsSummary(dashboard);
+  renderForgePanel(dashboard);
   renderAccessPanel(dashboard);
   setActiveTab(state.activeTab);
 }
@@ -880,6 +1255,12 @@ async function init() {
   elements.tabButtons.forEach((button) => {
     button.addEventListener("click", () => setActiveTab(button.dataset.tabTarget));
   });
+
+  window.addEventListener("hashchange", () => {
+    setActiveTab(window.location.hash.slice(1), { updateHash: false });
+  });
+
+  state.activeTab = normalizeTabId(window.location.hash.slice(1) || state.activeTab);
 
   renderDashboard(withSyncTimestamp(fallbackDashboard));
 

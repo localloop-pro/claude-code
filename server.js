@@ -45,6 +45,7 @@ const missionControlPayload = {
     "Anthropic latency down 12% since 14:00",
     "Stripe backlog drained after webhook retry",
     "2 launches staged for tonight's precinct campaigns",
+    "Forge intake is attached to the Mission Control deployment rail",
   ],
   businesses: [
     {
@@ -431,6 +432,165 @@ const missionControlPayload = {
       updated: "Updated 12m ago",
     },
   ],
+  forge: {
+    headline: {
+      status: "Live",
+      title: "AutoForge is wired into the Mission Control rail",
+      summary:
+        "New build requests open inside the same command deck, branch through the same deployment discipline, and land on Coolify without leaving the admin surface.",
+      chips: [
+        "Mission Control-owned intake",
+        "Branch-per-build flow",
+        "Preview before publish",
+        "Coolify release gate",
+      ],
+    },
+    metrics: [
+      {
+        label: "Active briefs",
+        value: "6",
+        detail: "Four builds are generating and two are waiting on operator review.",
+      },
+      {
+        label: "Median brief to preview",
+        value: "14m",
+        detail: "From accepted prompt to a reviewable environment with branch metadata attached.",
+      },
+      {
+        label: "Publish confidence",
+        value: "98.2%",
+        detail: "Recent Forge runs reached deploy-ready state without manual patching.",
+      },
+      {
+        label: "Coolify targets",
+        value: "4",
+        detail: "Web, API, worker, and preview rails are connected to the same release view.",
+      },
+    ],
+    stages: [
+      {
+        phase: "01 Intake",
+        title: "Capture the brief and assign a surface",
+        status: "Live",
+        detail:
+          "Operator requests and agent-generated opportunities enter Mission Control first, then get pinned to the target business, route, or platform rail.",
+        meta: ["Mission ticket #284", "Portfolio scoped", "Auth inherited"],
+      },
+      {
+        phase: "02 Generate",
+        title: "Open a branch and build inside guardrails",
+        status: "Generating",
+        detail:
+          "AutoForge creates the implementation branch, writes the UI or workflow change, and keeps every step visible from the same deck.",
+        meta: ["codex/forge-local-launch-kit", "UI + server touch", "Smoke checks queued"],
+      },
+      {
+        phase: "03 Review",
+        title: "Preview with audit context attached",
+        status: "Review",
+        detail:
+          "Preview links, changed surfaces, and deployment notes stay attached to the build so super admins can approve without leaving Mission Control.",
+        meta: ["Preview URL pending", "Audit note attached", "Rollback prepared"],
+      },
+      {
+        phase: "04 Deploy",
+        title: "Publish directly to Coolify",
+        status: "Ready",
+        detail:
+          "Approved changes merge into the primary rail, inherit existing environment secrets, and appear in the deployment view immediately.",
+        meta: ["Coolify target ready", "Shared env vars", "Release slot 5:30 PM"],
+      },
+    ],
+    builds: [
+      {
+        surface: "Campaign surface",
+        name: "Local launch kit generator",
+        status: "Generating",
+        summary:
+          "Creating a reusable launch scaffold with merchant offers, analytics hooks, and modular conversion blocks for upcoming precinct drops.",
+        branch: "codex/forge-local-launch-kit",
+        owner: "AutoForge",
+        next: "Preview URL in 6m",
+        updated: "Touched 2m ago",
+      },
+      {
+        surface: "Dashboard extension",
+        name: "Merchant analytics overlay",
+        status: "Review",
+        summary:
+          "Adds a Mission Control-ready reporting layer so newly generated surfaces can expose conversion and retention data on day one.",
+        branch: "codex/forge-merchant-analytics",
+        owner: "Growth desk",
+        next: "Awaiting super-admin signoff",
+        updated: "Touched 9m ago",
+      },
+      {
+        surface: "Deployment rail",
+        name: "Coolify release checklist",
+        status: "Ready",
+        summary:
+          "Packaging deployment notes, route ownership, and rollback instructions into a repeatable publish card for all Forge-built surfaces.",
+        branch: "codex/forge-coolify-checklist",
+        owner: "Platform ops",
+        next: "Promote during next rail window",
+        updated: "Touched 14m ago",
+      },
+    ],
+    releases: [
+      {
+        target: "Primary web rail",
+        name: "mission-control-web",
+        status: "Ready",
+        summary:
+          "Forge output merges into the main web deployment so the new surface ships with unified auth, observability, and release ownership.",
+        branch: "master merge queued",
+        window: "Next window 5:30 PM",
+        updated: "Confidence 98%",
+      },
+      {
+        target: "Preview environments",
+        name: "coolify-previews",
+        status: "Live",
+        summary:
+          "Each approved build can expose a review URL before publish, keeping stakeholder approval and regression checks in one rail.",
+        branch: "Branch previews armed",
+        window: "Created on demand",
+        updated: "Healthy now",
+      },
+      {
+        target: "Automation hooks",
+        name: "agents-and-jobs",
+        status: "Watch",
+        summary:
+          "Post-deploy agent sync is healthy overall, but campaign automation still waits on one stale partner inventory feed.",
+        branch: "Job pack March",
+        window: "Retry after re-auth",
+        updated: "1 dependency at risk",
+      },
+    ],
+    guardrails: [
+      {
+        title: "Unified auth boundary",
+        detail:
+          "Forge inherits the super-admin access model instead of creating a detached workflow or second login surface.",
+      },
+      {
+        title: "Single deploy story",
+        detail:
+          "Generated changes move through the same Mission Control release rail, so rollback and ownership stay obvious.",
+      },
+      {
+        title: "Branch-level traceability",
+        detail:
+          "Every Forge build opens a named branch and carries context for who requested it, what changed, and what ships next.",
+      },
+      {
+        title: "Audit-ready approvals",
+        detail:
+          "Preview, approval, and publish decisions remain visible in the command deck and align with the existing dismissal and change-lock posture.",
+      },
+    ],
+  },
 };
 
 function sendFile(filePath, response) {
