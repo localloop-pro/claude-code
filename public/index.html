@@ -14,37 +14,29 @@
       href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Azeret+Mono:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css?v=20260319c" />
+    <link rel="stylesheet" href="/styles.css?v=20260320b" />
   </head>
   <body>
     <div class="mission-frame">
-      <div class="browser-chrome" aria-hidden="true">
-        <div class="chrome-cluster">
-          <span class="chrome-dot red"></span>
-          <span class="chrome-dot amber"></span>
-          <span class="chrome-dot green"></span>
-        </div>
-        <div class="chrome-address">
-          <span class="chrome-rail"></span>
-          <span>mission-control.local / super-admin loop</span>
-        </div>
-        <div class="chrome-tools">
-          <span class="chrome-tool"></span>
-          <span class="chrome-tool"></span>
-          <span class="chrome-tool"></span>
-        </div>
-      </div>
+      <header class="masthead panel">
+        <div class="masthead-copy">
+          <div class="route-pill" aria-label="Environment route">
+            <span class="route-indicator"></span>
+            <span>mission-control.local</span>
+            <span class="route-divider">/</span>
+            <span class="route-muted">super-admin loop</span>
+          </div>
 
-      <header class="masthead">
-        <div class="brand-block">
-          <span class="brand-mark">MC</span>
-          <div>
-            <p class="eyebrow">Super admin command deck</p>
-            <h1>Bondi Local Mission Control</h1>
-            <p class="brand-subcopy">
-              Admin-only oversight for deploys, dismissals, keys, incidents, and every live control
-              surface in the local loop.
-            </p>
+          <div class="brand-block">
+            <span class="brand-mark">MC</span>
+            <div>
+              <p class="eyebrow">Super admin command deck</p>
+              <h1>Bondi Local Mission Control</h1>
+              <p class="brand-subcopy">
+                Admin-only oversight for deploys, dismissals, keys, incidents, and every live
+                control rail in the local loop.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -85,18 +77,22 @@
       <section class="panel alert-banner" aria-label="Control notice">
         <div class="alert-icon">i</div>
         <div>
-          <strong>Access policy active:</strong>
+          <strong>Access policy active</strong>
           <p>
-            Super-admin changes are tracked, scoped, and reversible. The mission deck continues in
-            observe mode until you explicitly unlock a control rail.
+            Super-admin changes stay scoped and reversible until you explicitly unlock a control
+            rail.
           </p>
         </div>
       </section>
 
       <header class="tab-shell">
-        <div>
-          <p class="eyebrow">Dashboard tabs</p>
-          <h3>Right place, right surface, right time.</h3>
+        <div class="tab-shell-copy">
+          <p class="eyebrow">Mission surfaces</p>
+          <h3>Choose the rail you need.</h3>
+          <p class="tab-shell-note">
+            Overview stays wide. Each tab narrows the mission deck to the control surface that
+            matters now.
+          </p>
         </div>
         <nav class="tab-strip" aria-label="Mission Control sections" role="tablist">
           <button class="tab-button is-active" type="button" data-tab-target="overview" role="tab">Overview</button>
@@ -401,11 +397,9 @@
               </div>
               <a
                 class="analyze-button secondary-action access-link"
-                href="http://localhost:3001/api-docs/#/Authentication/post_api_auth_logout"
-                target="_blank"
-                rel="noreferrer"
+                href="/api-docs/#/Authentication/post_api_auth_logout"
               >
-                Open local API docs
+                Open online API docs
               </a>
             </article>
             <article class="access-card access-card-wide">
@@ -420,6 +414,6 @@
       </main>
     </div>
 
-    <script src="/app.js?v=20260319c" defer></script>
+    <script src="/app.js?v=20260320b" defer></script>
   </body>
 </html>
