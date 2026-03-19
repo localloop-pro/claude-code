@@ -6,7 +6,7 @@
     <title>Bondi Local Mission Control</title>
     <meta
       name="description"
-      content="Mission Control for Bondi Local super admins: portfolio pulse, BYOK integrations, incidents, agents, and deployment health."
+      content="Admin-only Mission Control for Bondi Local super admins: business oversight, deployments, BYOK posture, incidents, and access controls."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,83 +17,171 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="page-shell">
+    <div class="mission-frame">
+      <div class="browser-chrome" aria-hidden="true">
+        <div class="chrome-cluster">
+          <span class="chrome-dot red"></span>
+          <span class="chrome-dot amber"></span>
+          <span class="chrome-dot green"></span>
+        </div>
+        <div class="chrome-address">
+          <span class="chrome-rail"></span>
+          <span>mission-control.local / super-admin loop</span>
+        </div>
+        <div class="chrome-tools">
+          <span class="chrome-tool"></span>
+          <span class="chrome-tool"></span>
+          <span class="chrome-tool"></span>
+        </div>
+      </div>
+
       <header class="masthead">
-        <div>
-          <p class="eyebrow">Super admin command deck</p>
-          <div class="brand-row">
-            <span class="brand-mark">BL</span>
-            <div>
-              <h1>Bondi Local Mission Control</h1>
-              <p class="brand-subcopy">OpenClaw-like oversight for businesses operating on their own keys.</p>
-            </div>
+        <div class="brand-block">
+          <span class="brand-mark">MC</span>
+          <div>
+            <p class="eyebrow">Super admin command deck</p>
+            <h1>Bondi Local Mission Control</h1>
+            <p class="brand-subcopy">
+              Admin-only oversight for deploys, dismissals, keys, incidents, and every live control
+              surface in the local loop.
+            </p>
           </div>
         </div>
-        <div class="masthead-actions">
+
+        <div class="masthead-side">
           <div class="live-pill">
             <span class="live-dot"></span>
             <span id="sync-time">Syncing...</span>
           </div>
-          <a class="ghost-link" href="health">Health</a>
-          <a class="ghost-link" href="https://github.com/localloop-pro/claude-code">Repository</a>
+          <div class="status-pills" aria-label="Access posture">
+            <span class="inline-badge">Local loop</span>
+            <span class="inline-badge">Admin only</span>
+            <span class="inline-badge">Change lock ready</span>
+          </div>
         </div>
       </header>
 
-      <section class="hero-grid">
-        <div class="hero-panel panel">
-          <p class="eyebrow">Mission brief</p>
-          <div class="hero-copy">
-            <div>
-              <h2>One control room for portfolio performance, AI operators, deploy health, and BYOK custody.</h2>
-              <p class="lede">
-                This shell is tuned for Bondi Local super admins who need to move between businesses,
-                watch live demand, check provider keys, and intervene before issues spill into customer
-                experience.
-              </p>
-            </div>
-            <div id="kpi-grid" class="kpi-grid"></div>
-          </div>
-          <div id="operations-tape" class="operations-tape" aria-label="Operations ticker"></div>
-        </div>
-
-        <aside class="briefing-panel panel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Command briefing</p>
-              <h3 id="briefing-title">Selecting business...</h3>
-            </div>
+      <section class="command-bar panel">
+        <div>
+          <p class="eyebrow">Control scope</p>
+          <div class="command-title-row">
+            <h2 id="business-name">Bondi Beach Flagship</h2>
             <span id="briefing-status" class="status-chip">Nominal</span>
           </div>
-          <p id="briefing-summary" class="briefing-summary"></p>
-          <div id="briefing-metrics" class="briefing-metrics"></div>
-          <div class="briefing-footer">
-            <div>
-              <span class="footer-label">Mode</span>
-              <strong id="briefing-mode"></strong>
-            </div>
-            <div>
-              <span class="footer-label">Watchpoint</span>
-              <strong id="briefing-watch"></strong>
-            </div>
+          <p id="business-summary" class="command-summary">
+            This dashboard is tuned for super-admin response across business surfaces, infra, and
+            access enforcement.
+          </p>
+        </div>
+        <div class="command-actions">
+          <button type="button" class="analyze-button">Run audit</button>
+          <div class="command-meta">
+            <span class="meta-chip">Portfolio-wide</span>
+            <span class="meta-chip">Realtime sync</span>
           </div>
-        </aside>
+        </div>
       </section>
 
+      <section class="panel alert-banner" aria-label="Control notice">
+        <div class="alert-icon">i</div>
+        <div>
+          <strong>Access policy active:</strong>
+          <p>
+            Super-admin changes are tracked, scoped, and reversible. The mission deck continues in
+            observe mode until you explicitly unlock a control rail.
+          </p>
+        </div>
+      </section>
+
+      <header class="tab-shell">
+        <div>
+          <p class="eyebrow">Dashboard tabs</p>
+          <h3>Right place, right surface, right time.</h3>
+        </div>
+        <nav class="tab-strip" aria-label="Mission Control sections" role="tablist">
+          <button class="tab-button is-active" type="button" data-tab-target="overview" role="tab">Overview</button>
+          <button class="tab-button" type="button" data-tab-target="businesses" role="tab">Businesses</button>
+          <button class="tab-button" type="button" data-tab-target="operations" role="tab">Operations</button>
+          <button class="tab-button" type="button" data-tab-target="systems" role="tab">Systems</button>
+          <button class="tab-button" type="button" data-tab-target="access" role="tab">Access</button>
+        </nav>
+      </header>
+
       <main class="dashboard-grid">
-        <section class="panel span-7">
+        <section class="panel span-12 dashboard-panel" data-panel="overview" role="tabpanel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Live control signals</p>
+              <h3>Primary signals</h3>
+            </div>
+            <span class="panel-note">Current scope: <strong id="business-tag">Flagship precinct</strong></span>
+          </div>
+          <div class="overview-board">
+            <div class="primary-signal">
+              <p class="signal-label">Primary signals</p>
+              <strong id="primary-trend">Trend: Upward 3800→4555</strong>
+              <span id="primary-support">Support: 4300</span>
+              <span id="primary-structure">Structure: Bullish HL/HH</span>
+            </div>
+            <div class="signal-card signal-short">
+              <div class="signal-card-head">
+                <strong>Short</strong>
+                <span class="pill warn">Watch</span>
+              </div>
+              <p id="short-signal">Support: 4530</p>
+              <span id="short-detail">Signal: Cautious long</span>
+            </div>
+            <div class="signal-card signal-long">
+              <div class="signal-card-head">
+                <strong>Long</strong>
+                <span class="pill ok">2x</span>
+              </div>
+              <p id="long-signal">Entry: $4,555</p>
+              <span id="long-detail">SL: $4,300 | TP: $5,000</span>
+            </div>
+            <div class="signal-card signal-technical">
+              <div class="signal-card-head">
+                <strong>Technical</strong>
+                <span class="pill ok">Live</span>
+              </div>
+              <p id="technical-signal">MACD/RSI: Positive</p>
+              <span id="technical-detail">OBV: Accumulation</span>
+            </div>
+            <div class="signal-card signal-sentiment">
+              <div class="signal-card-head">
+                <strong>Sentiment</strong>
+                <span class="pill warn">Neutral+</span>
+              </div>
+              <p id="sentiment-signal">Institutional accumulation ongoing</p>
+              <span id="sentiment-detail">Operator activity steady</span>
+            </div>
+            <div class="risk-strip">
+              <div class="signal-card-head">
+                <strong>Risk</strong>
+                <span class="pill risk">Tight</span>
+              </div>
+              <p id="risk-signal">Tight stops required</p>
+              <span id="risk-detail">One stale partner feed under watch</span>
+            </div>
+          </div>
+          <div class="signal-metrics" id="kpi-grid"></div>
+          <div id="operations-tape" class="operations-tape" aria-label="Operations ticker"></div>
+        </section>
+
+        <section class="panel span-12 dashboard-panel" data-panel="businesses" role="tabpanel">
           <div class="panel-head">
             <div>
               <p class="eyebrow">Portfolio pulse</p>
-              <h3>Live business surfaces</h3>
+              <h3>Business surfaces</h3>
             </div>
-            <span class="panel-note">Tap a card to shift the command focus.</span>
+            <span class="panel-note">Select a card to refocus the mission briefing.</span>
           </div>
           <div id="portfolio-nav" class="portfolio-nav"></div>
           <div class="spotlight-grid">
             <div class="spotlight-copy">
-              <span id="business-tag" class="inline-badge"></span>
-              <h2 id="business-name">Loading...</h2>
-              <p id="business-summary" class="spotlight-summary"></p>
+              <p class="eyebrow">Selected surface</p>
+              <h2 id="spotlight-name">Loading...</h2>
+              <p id="spotlight-summary" class="spotlight-summary"></p>
               <div id="business-metrics" class="business-metrics"></div>
             </div>
             <div class="signal-panel">
@@ -106,53 +194,51 @@
               <div id="signal-bars" class="signal-bars"></div>
             </div>
           </div>
-        </section>
-
-        <section class="panel span-5">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Revenue vector</p>
-              <h3>Seven-day momentum</h3>
+          <div class="business-summary-strip">
+            <div class="summary-pill">
+              <span class="metric-label">Mode</span>
+              <strong id="briefing-mode">Loading...</strong>
             </div>
-            <span id="revenue-caption" class="panel-note"></span>
+            <div class="summary-pill">
+              <span class="metric-label">Watchpoint</span>
+              <strong id="briefing-watch">Loading...</strong>
+            </div>
           </div>
-          <div id="revenue-chart" class="revenue-chart" aria-label="Revenue trend"></div>
+          <div class="revenue-shell">
+            <div class="panel-head revenue-head">
+              <div>
+                <p class="eyebrow">Revenue vector</p>
+                <h3>Seven-day momentum</h3>
+              </div>
+              <span id="revenue-caption" class="panel-note"></span>
+            </div>
+            <div id="revenue-chart" class="revenue-chart" aria-label="Revenue trend"></div>
+          </div>
         </section>
 
-        <section class="panel span-7">
+        <section class="panel span-7 dashboard-panel" data-panel="operations" role="tabpanel">
           <div class="panel-head">
             <div>
               <p class="eyebrow">Agent operations</p>
               <h3>Autonomous systems in flight</h3>
             </div>
-            <span class="panel-note">Customer, marketing, and recovery loops.</span>
+            <span class="panel-note">Customer, retention, growth, and checkout loops.</span>
           </div>
           <div id="agent-grid" class="agent-grid"></div>
         </section>
 
-        <section class="panel span-5">
+        <section class="panel span-5 dashboard-panel" data-panel="operations" role="tabpanel">
           <div class="panel-head">
             <div>
               <p class="eyebrow">Manual queue</p>
               <h3>Interventions worth attention</h3>
             </div>
-            <span class="panel-note">Super admin tasks ranked by urgency.</span>
+            <span class="panel-note">Super-admin actions ranked by urgency.</span>
           </div>
           <div id="manual-queue" class="manual-queue"></div>
         </section>
 
-        <section class="panel span-6">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">BYOK vault</p>
-              <h3>Provider keys and runtime posture</h3>
-            </div>
-            <span class="panel-note">Connection health, owner, and rotation windows.</span>
-          </div>
-          <div id="provider-list" class="provider-list"></div>
-        </section>
-
-        <section class="panel span-6">
+        <section class="panel span-12 dashboard-panel" data-panel="operations" role="tabpanel">
           <div class="panel-head">
             <div>
               <p class="eyebrow">Incident feed</p>
@@ -163,15 +249,75 @@
           <div id="incident-list" class="incident-list"></div>
         </section>
 
-        <section class="panel span-12">
+        <section class="panel span-6 dashboard-panel" data-panel="systems" role="tabpanel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">BYOK vault</p>
+              <h3>Provider keys and runtime posture</h3>
+            </div>
+            <span class="panel-note">Connection health, owner, and rotation windows.</span>
+          </div>
+          <div id="provider-list" class="provider-list"></div>
+        </section>
+
+        <section class="panel span-6 dashboard-panel" data-panel="systems" role="tabpanel">
           <div class="panel-head">
             <div>
               <p class="eyebrow">Deploy rail</p>
               <h3>Environment status and release confidence</h3>
             </div>
-            <span class="panel-note">This remains a single-command Node deployment.</span>
+            <span class="panel-note">Single-command Node deployment posture.</span>
           </div>
           <div id="deployment-list" class="deployment-list"></div>
+        </section>
+
+        <section class="panel span-12 dashboard-panel" data-panel="access" role="tabpanel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Access control</p>
+              <h3>Super-admin rails and audit posture</h3>
+            </div>
+            <span class="panel-note">Use this tab to lock, rotate, or dismiss.</span>
+          </div>
+          <div class="access-grid">
+            <article class="access-card access-card-wide">
+              <div class="access-card-head">
+                <div>
+                  <p class="metric-label">Command authority</p>
+                  <strong>Global change lock</strong>
+                </div>
+                <span class="pill ok">Armed</span>
+              </div>
+              <p>
+                All deploys, provider changes, and destructive actions are gated behind super-admin
+                access and logged to the mission trail.
+              </p>
+              <div class="command-actions access-actions">
+                <button type="button" class="analyze-button secondary-action">Rotate keys</button>
+                <button type="button" class="analyze-button secondary-action">Dismiss alerts</button>
+                <button type="button" class="analyze-button secondary-action">Freeze launches</button>
+              </div>
+            </article>
+            <article class="access-card">
+              <div class="access-card-head">
+                <p class="metric-label">Role matrix</p>
+                <span class="pill warn">Restricted</span>
+              </div>
+              <ul class="access-list">
+                <li><strong>Super admin</strong><span>Full control</span></li>
+                <li><strong>Operator</strong><span>Deploy and observe</span></li>
+                <li><strong>Analyst</strong><span>Read and inspect</span></li>
+                <li><strong>Guest</strong><span>No access</span></li>
+              </ul>
+            </article>
+            <article class="access-card">
+              <div class="access-card-head">
+                <p class="metric-label">Audit trail</p>
+                <span class="pill ok">Live</span>
+              </div>
+              <div id="audit-trail" class="audit-trail"></div>
+            </article>
+          </div>
         </section>
       </main>
     </div>

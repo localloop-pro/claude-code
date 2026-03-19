@@ -1,18 +1,33 @@
 const elements = {
   syncTime: document.querySelector("#sync-time"),
+  tabButtons: [...document.querySelectorAll("[data-tab-target]")],
+  tabPanels: [...document.querySelectorAll("[data-panel]")],
   kpiGrid: document.querySelector("#kpi-grid"),
   operationsTape: document.querySelector("#operations-tape"),
-  briefingTitle: document.querySelector("#briefing-title"),
   briefingStatus: document.querySelector("#briefing-status"),
-  briefingSummary: document.querySelector("#briefing-summary"),
-  briefingMetrics: document.querySelector("#briefing-metrics"),
+  briefingSummary: document.querySelector("#business-summary"),
   briefingMode: document.querySelector("#briefing-mode"),
   briefingWatch: document.querySelector("#briefing-watch"),
   portfolioNav: document.querySelector("#portfolio-nav"),
   businessTag: document.querySelector("#business-tag"),
+  spotlightName: document.querySelector("#spotlight-name"),
+  spotlightSummary: document.querySelector("#spotlight-summary"),
   businessName: document.querySelector("#business-name"),
   businessSummary: document.querySelector("#business-summary"),
   businessMetrics: document.querySelector("#business-metrics"),
+  primaryTrend: document.querySelector("#primary-trend"),
+  primarySupport: document.querySelector("#primary-support"),
+  primaryStructure: document.querySelector("#primary-structure"),
+  shortSignal: document.querySelector("#short-signal"),
+  shortDetail: document.querySelector("#short-detail"),
+  longSignal: document.querySelector("#long-signal"),
+  longDetail: document.querySelector("#long-detail"),
+  technicalSignal: document.querySelector("#technical-signal"),
+  technicalDetail: document.querySelector("#technical-detail"),
+  sentimentSignal: document.querySelector("#sentiment-signal"),
+  sentimentDetail: document.querySelector("#sentiment-detail"),
+  riskSignal: document.querySelector("#risk-signal"),
+  riskDetail: document.querySelector("#risk-detail"),
   orbitValue: document.querySelector("#orbit-value"),
   signalBars: document.querySelector("#signal-bars"),
   revenueCaption: document.querySelector("#revenue-caption"),
@@ -22,11 +37,13 @@ const elements = {
   providerList: document.querySelector("#provider-list"),
   incidentList: document.querySelector("#incident-list"),
   deploymentList: document.querySelector("#deployment-list"),
+  auditTrail: document.querySelector("#audit-trail"),
 };
 
 const state = {
   dashboard: null,
   selectedBusinessId: null,
+  activeTab: "overview",
 };
 
 const fallbackDashboard = {
@@ -508,6 +525,25 @@ function withSyncTimestamp(dashboard) {
   };
 }
 
+function setActiveTab(tabId) {
+  state.activeTab = tabId;
+  document.documentElement.dataset.activeTab = tabId;
+
+  elements.tabButtons.forEach((button) => {
+    const isActive = button.dataset.tabTarget === tabId;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+    button.tabIndex = isActive ? 0 : -1;
+  });
+
+  elements.tabPanels.forEach((panel) => {
+    const isActive = panel.dataset.panel === tabId;
+    panel.classList.toggle("is-active", isActive);
+    panel.toggleAttribute("hidden", !isActive);
+    panel.setAttribute("aria-hidden", String(!isActive));
+  });
+}
+
 function renderSummary(dashboard) {
   elements.syncTime.textContent = formatSyncLabel(dashboard.syncedAt, dashboard.timezone);
   elements.kpiGrid.replaceChildren(
@@ -544,25 +580,67 @@ function renderPortfolio(dashboard) {
   );
 }
 
+function buildSignalCopy(business) {
+  const trend = business.revenueTrend ?? [];
+  const firstPoint = trend[0];
+  const lastPoint = trend[trend.length - 1] ?? firstPoint;
+  const signalCover = business.signals?.[1]?.value ?? business.focusScore;
+  const supportMetric = business.metrics?.[1]?.value ?? business.metrics?.[0]?.value ?? "—";
+  const resolutionMetric = business.metrics?.[3]?.value ?? business.metrics?.[0]?.value ?? "—";
+
+  return {
+    trend: `Trend: ${business.status === "Risk" ? "Defensive" : "Upward"} ${firstPoint?.display ?? "—"}→${
+      lastPoint?.display ?? "—"
+    }`,
+    support: `Support: ${supportMetric}`,
+    structure: `Structure: ${business.status === "Risk" ? "Lower highs" : "Bullish HL/HH"}`,
+    shortSignal: `Queue: ${supportMetric}`,
+    shortDetail: `Signal: ${business.status === "Risk" ? "Hold" : "Cautious push"}`,
+    longSignal: `Target: ${lastPoint?.display ?? "—"}`,
+    longDetail: `Mode: ${business.mode}`,
+    technicalSignal: `Automation cover: ${signalCover}%`,
+    technicalDetail: `Resolution: ${resolutionMetric}`,
+    sentimentSignal: business.snapshot,
+    sentimentDetail: business.metrics?.[2]?.detail ?? business.summary,
+    riskSignal: business.watchpoint,
+    riskDetail: business.status === "Risk" ? "Immediate intervention recommended" : "Monitor for drift",
+  };
+}
+
 function renderBusinessFocus() {
   const dashboard = state.dashboard;
   const business =
     dashboard.businesses.find((item) => item.id === state.selectedBusinessId) || dashboard.businesses[0];
   state.selectedBusinessId = business.id;
 
-  elements.briefingTitle.textContent = business.name;
+  const signals = buildSignalCopy(business);
+
+  elements.spotlightName.textContent = business.name;
+  elements.spotlightSummary.textContent = `${business.region}. ${business.snapshot}`;
+  elements.businessSummary.textContent = business.summary;
   elements.briefingSummary.textContent = business.summary;
   elements.briefingMode.textContent = business.mode;
   elements.briefingWatch.textContent = business.watchpoint;
   elements.briefingStatus.textContent = business.status;
   elements.briefingStatus.className = `status-chip ${statusClass(business.status)}`;
-  elements.briefingMetrics.replaceChildren(...business.metrics.map((metric) => createPanelMetricCard(metric)));
 
   elements.businessTag.textContent = business.tag;
   elements.businessName.textContent = business.name;
-  elements.businessSummary.textContent = business.summary;
   elements.businessMetrics.replaceChildren(...business.metrics.map((metric) => createPanelMetricCard(metric)));
   elements.orbitValue.textContent = `${business.focusScore}%`;
+  elements.primaryTrend.textContent = signals.trend;
+  elements.primarySupport.textContent = signals.support;
+  elements.primaryStructure.textContent = signals.structure;
+  elements.shortSignal.textContent = signals.shortSignal;
+  elements.shortDetail.textContent = signals.shortDetail;
+  elements.longSignal.textContent = signals.longSignal;
+  elements.longDetail.textContent = signals.longDetail;
+  elements.technicalSignal.textContent = signals.technicalSignal;
+  elements.technicalDetail.textContent = signals.technicalDetail;
+  elements.sentimentSignal.textContent = signals.sentimentSignal;
+  elements.sentimentDetail.textContent = signals.sentimentDetail;
+  elements.riskSignal.textContent = signals.riskSignal;
+  elements.riskDetail.textContent = signals.riskDetail;
 
   elements.signalBars.replaceChildren(
     ...business.signals.map((signal) => {
@@ -731,6 +809,48 @@ function renderCollections(dashboard) {
   );
 }
 
+function createAuditEntry(entry, index) {
+  const row = document.createElement("article");
+  row.className = "audit-entry fade-up";
+  row.style.setProperty("--delay", `${index * 70}ms`);
+  row.innerHTML = `
+    <strong>${entry.title}</strong>
+    <div class="queue-footer">
+      <span class="scope-chip">${entry.time}</span>
+      <span class="scope-chip">${entry.detail}</span>
+    </div>
+  `;
+  return row;
+}
+
+function renderAccessPanel(dashboard) {
+  const providerUnderWatch = dashboard.providers.find((provider) => provider.status !== "Nominal");
+  const entries = [
+    {
+      title: "Change lock verified",
+      time: "Now",
+      detail: "All production edits require super-admin approval.",
+    },
+    {
+      title: "Key rotation window",
+      time: providerUnderWatch?.rotation ?? "Scheduled",
+      detail: providerUnderWatch ? providerUnderWatch.name : "No providers require rotation right now.",
+    },
+    {
+      title: "Latest control signal",
+      time: "Live",
+      detail: dashboard.operationsTape[0] ?? "Mission deck online.",
+    },
+    {
+      title: "Dismissal audit",
+      time: "24h",
+      detail: "No emergency dismissals recorded in the current window.",
+    },
+  ];
+
+  elements.auditTrail.replaceChildren(...entries.map((entry, index) => createAuditEntry(entry, index)));
+}
+
 function renderDashboard(dashboard) {
   state.dashboard = dashboard;
   state.selectedBusinessId = dashboard.defaultBusinessId;
@@ -738,6 +858,8 @@ function renderDashboard(dashboard) {
   renderPortfolio(dashboard);
   renderBusinessFocus();
   renderCollections(dashboard);
+  renderAccessPanel(dashboard);
+  setActiveTab(state.activeTab);
 }
 
 async function loadDashboard() {
@@ -755,6 +877,10 @@ async function loadDashboard() {
 }
 
 async function init() {
+  elements.tabButtons.forEach((button) => {
+    button.addEventListener("click", () => setActiveTab(button.dataset.tabTarget));
+  });
+
   renderDashboard(withSyncTimestamp(fallbackDashboard));
 
   try {
