@@ -9,3 +9,6 @@ curl --fail --silent --show-error "${BASE_URL}/health"
 echo
 echo "Checking ${BASE_URL}/"
 curl --fail --silent --show-error --head "${BASE_URL}/"
+echo
+echo "Checking ${BASE_URL}/api-docs/"
+curl --fail --silent --show-error --head "${BASE_URL}/api-docs/"

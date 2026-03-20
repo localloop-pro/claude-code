@@ -88,6 +88,12 @@ http://clade-w0w0og.167.86.79.151.sslip.io
 https://clade-w0w0og.167.86.79.151.sslip.io
 ```
 
+The Authentication docs linked from Mission Control will also be available on the same host:
+
+```text
+https://clade-w0w0og.167.86.79.151.sslip.io/api-docs/#/Authentication/post_api_auth_logout
+```
+
 ## 5. Open the firewall
 
 If `ufw` is enabled:
@@ -108,6 +114,7 @@ Use [scripts/smoke-test.sh](/Users/user/claude-code/scripts/smoke-test.sh):
 bash scripts/smoke-test.sh
 curl -I http://clade-w0w0og.167.86.79.151.sslip.io
 curl -I https://clade-w0w0og.167.86.79.151.sslip.io
+curl -I https://clade-w0w0og.167.86.79.151.sslip.io/api-docs/
 ```
 
 ## 7. If it fails
